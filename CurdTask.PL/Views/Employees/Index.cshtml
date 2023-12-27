@@ -1,0 +1,97 @@
+﻿
+@model IEnumerable<EmployeeToReturnViewModel>
+@{
+    ViewData["Title"] = "GetAllEmployees";
+}
+
+@if (User.IsInRole("Entry"))
+{
+<a asp-controller="Employees" asp-action="CreateNewEmployee" class="btn btn-primary">Add New</a>
+
+}
+@if (User.IsInRole("Admin"))
+{
+    
+<a asp-controller="Employees" asp-action="ExportEmployeesInExecl" class="btn btn-primary">Export To Execl Sheet</a>
+}
+
+<h1> All Employees</h1>
+
+
+
+
+
+
+
+@if (Model.Count() > 0)
+{
+    <div class="mt-4">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.EmployeeId)</th>
+                    <th>@Html.DisplayNameFor(model => model.Name)</th>
+                  
+                    <th>@Html.DisplayNameFor(model => model.Salary)</th>
+                    <th>@Html.DisplayNameFor(model => model.CityName)</th>
+                    <th>@Html.DisplayNameFor(model => model.SubCityName)</th>
+                    <th>@Html.DisplayNameFor(model => model.VillageName)</th>
+
+                    @if (User.IsInRole("Admin") || User.IsInRole("Editor"))
+                    {
+                    <th>Details</th>
+                    }
+                    @if ( User.IsInRole("Editor"))
+                    {
+                        <th>Edit</th>
+                        <th>Delete</th>
+                    }
+                   
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var employee in Model)
+                {
+                    <tr id="emp'@employee.EmployeeId'">
+                        <td>@Html.DisplayFor(modelItem => employee.EmployeeId)</td>
+                        
+                        <td>@Html.DisplayFor(modelItem => employee.Name)</td>
+                        <td>@Html.DisplayFor(modelItem => employee.Salary)</td>
+                        <td>@Html.DisplayFor(modelItem => employee.CityName)</td>
+                        <td>@Html.DisplayFor(modelItem => employee.SubCityName)</td>
+                        <td>@Html.DisplayFor(modelItem => employee.VillageName)</td>
+
+                        @if (User.IsInRole("Editor") ||User.IsInRole("Admin"))
+                        {
+                            <td>
+                                <a class="btn btn-warning" asp-action="Details" asp-route-id="@employee.EmployeeId"> Details</a>
+                            </td>
+                        }
+                        @if (User.IsInRole("Editor"))
+                        {
+                            <td>
+                                <a class="btn btn-info" asp-action="EditEmployee" asp-route-id="@employee.EmployeeId"> Edit</a>
+                            </td>
+                            <td>
+                                <a class="btn btn-danger" id="@employee.EmployeeId" onclick="deleteEmployee('@employee.EmployeeId')"> Delete</a>
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="mt-2">
+        <h1>There are no employees!</h1>
+    </div>
+}
+
+
+@section scripts {
+    <script src="~/js/deleteemployee.js"></script>
+
+}
